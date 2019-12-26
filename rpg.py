@@ -1,7 +1,8 @@
-from random import randint
-from tkinter import *
+import random
+import tkinter
+import functools
 
-root = Tk()
+root = tkinter.Tk()
 root.geometry("250x200")
 root.title("cave explorer")
 root.rowconfigure(0, {"minsize": 30})
@@ -16,39 +17,125 @@ root.rowconfigure(5, {"minsize": 30})
 root.rowconfigure(6, {"minsize": 30})
 
 class player:
-
     def __init__(self, name, hp, inventory):
         self.name = name
         self.hp = hp
         self.inventory = inventory
+
+def win_fight(monster):
+    global winner_text
+    global nav_text
+    global left_btn
+    global right_btn
+    global attack_text
+    global damage_text
+    global next_btn
+    attack_text.destroy()
+    damage_text.destroy()
+    next_btn.destroy()
+    monster_hp = 0
+    enemy_hp.config(text="Foe's hp: " + str(monster_hp))
+    winner_text = tkinter.Label(root, wraplength=250, text="You have defeted the " + monster)
+    winner_text.grid(row=0, column=0, columnspan=3)
+    nav_text = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="You can just make out 2 tunnels at the edge of the flickering light of your torch. Will you go right or left?")
+    nav_text.grid(row=1, column=0, columnspan=3)
+    left_btn = tkinter.Button(root, text="Left", command=move_left)
+    left_btn.grid(row=2, column=0)
+    right_btn = tkinter.Button(root, text="Right", command= move_right)
+    right_btn.grid(row=2, column=2)
+
+def monsterAttack(monster):
+    global attack_text
+    global damage_text
+    global next_btn
+    global dir_label
+    dir_label.destroy()
+    attack_text.destroy()
+    damage_text.destroy()
+    damage = random.randint(0, 5)
+    attack_text = tkinter.Label(root, wraplength=250, text="The " + monster + " attacks")
+    attack_text.grid(row=0, column=0, columnspan=3)
+    damage_text = tkinter.Label(root, wraplength=250, text="It hits for " + str(damage) + " points")
+    damage_text.grid(row=1, column=0, columnspan=3)
+    hero.hp = hero.hp - damage
+    hp_indicator.config(text="HP: " + str(hero.hp))
+    next_btn.config(command= lambda: battle(monster))
+
+def attack(monster):
+    global monster_hp
+    global combat_text
+    global battle_options
+    global attack_text
+    global damage_text
+    global next_btn
+    combat_text.destroy()
+    battle_options.destroy()
+    attack_btn.destroy()
+    flee_btn.destroy()
+    attack_text = tkinter.Label(root, wraplength=250, text="You swing your dagger at the " + monster)
+    attack_text.grid(row=0, column=0, columnspan=3)
+    damage = random.randint(0, 5)
+    damage_text = tkinter.Label(root, wraplength=250, text="You hit for " + str(damage) + " points")
+    damage_text.grid(row=1, column=0, columnspan=3)
+    monster_hp = monster_hp - damage
+    enemy_hp.config(text="Foe's hp: " + str(monster_hp))
+    action_with_arg = functools.partial(monsterAttack, monster)
+    if monster_hp <= 0:
+        action_with_arg = functools.partial(win_fight, monster)
+    next_btn = tkinter.Button(root, text="Next", command= action_with_arg)
+    next_btn.grid(row=2, column=1)
+
+def flee(monster):
+    global combat_text
+    global battle_options
+    combat_text.destroy()
+    battle_options.destroy()
+    attack_btn.destroy()
+    flee_btn.destroy()
+    fleeing = tkinter.Label(root, wraplength=250, text="You Have fled from the cave in shame")
+    fleeing.grid(row=0, column=0, columnspan=3)
+    close_app = tkinter.Button(root, text="close", command=root.quit)
+    close_app.grid(row=1, column=1)
+
 def battle(monster):
-    
-    monster_hp = randint(10,20)
-    combat_text = Label(root, text="the monster is looming over you")
-    combat_text.grid(row=o, column=1)
-    while monster_hp > 0 and hero.hp > 0:
-        print("enter attack or flee")
-        action = input(":")
-        if action == "flee":
-            print("you run in terror out of the cave")
-            hero.hp = 0
-        if action == "attack":
-            print("you swing your dagger")
-            damage = randint(1,5)
-            print("it hits for " + str(damage) + " points")
-            monster_hp = monster_hp - damage
-            print("the orc has " + str(monster_hp) + " hp remaining")
-            input("press enter to continue:")
-            if monster_hp > 0:
-                print("the orc slashes with its claws")
-                damage = randint(1,5)
-                print("it hits for " + str(damage) + " points")
-                hero.hp = hero.hp - damage
-                print("You have " + str(hero.hp) + " hp remaining")
-                input("press enter to continue:")
-            else:
-                print("You have slain the monster")
-                print("Do you go left or right?a")
+    global monster_hp
+    global flee_btn
+    global enemy_hp
+    global hp_indicator
+    global combat_text
+    global battle_options
+    global attack_btn
+    global flee_btn
+    global dir_label
+    global damage_text
+    global attack_text
+    dir_label.destroy()
+    try:
+        next_btn.destroy()
+    except (NameError, AttributeError):
+        pass
+    try:
+        damage_text.destroy()
+    except (NameError, AttributeError):
+        pass
+    try:
+        attack_text.destroy()
+    except (NameError, AttributeError):
+        pass
+    start_fight.destroy()
+    encounter_start.destroy()
+    if monster_hp == 0:
+        monster_hp = random.randint(10, 20)
+    enemy_hp.config(text="Foe's hp: " + str(monster_hp))
+    hp_indicator.config(text="HP: " + str(hero.hp))
+    combat_text = tkinter.Label(root, text="the monster is looming over you")
+    combat_text.grid(row=0, column=0, columnspan=3)
+    battle_options = tkinter.Label(root, text ="Do you attack or flee")
+    battle_options.grid(row= 1, column=0, columnspan=3)
+    attack_btn = tkinter.Button(root, text="attack", command= lambda: attack(monster))
+    attack_btn.grid(row=2, column= 2)
+    flee_btn = tkinter.Button(root, text="Flee", command= lambda: flee(monster))
+    flee_btn.grid(row=2, column=0)
 
 def create_hero():
     global hero
@@ -57,68 +144,91 @@ def create_hero():
     global intro_label
     global intro_text
     global next_btn
+    global enemy_hp
+    global hp_indicator
     name = player_name.get()
     hero = player(name, 100, ["dagger"])
     intro_label.destroy()
     name_button.destroy()
     player_name.destroy()
-    intro_text = Label(root,wraplength=250, justify=CENTER, text="Welcome " + hero.name + " you find your self in a cavern.")
+    intro_text = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="Welcome " + hero.name + " you find your self in a cavern.")
     intro_text.grid(row=0, column=0, columnspan=3)
-    next_btn = Button(root, text="Next", justify=CENTER, command= move_loop)
+    next_btn = tkinter.Button(root, text="Next", justify=tkinter.CENTER, command= move_loop)
     next_btn.grid(row=1, column=1 )
-    hp_indicator = Label(root, text="HP: "+ str(hero.hp))
+    hp_indicator = tkinter.Label(root, text="HP: " + str(hero.hp))
     hp_indicator.grid(row=5, column=0)
-    name_plate = Label(root, text=hero.name)
+    name_plate = tkinter.Label(root, text=hero.name)
     name_plate.grid(row=5, column=1)
-    enemy_hp = Label(root, text= "Foe's hp: " + str(monster_hp))
+    enemy_hp = tkinter.Label(root, text="Foe's hp: " + str(monster_hp))
     enemy_hp.grid(row=5, column=2)
 
 def move_left():
     global  left_btn
     global right_btn
     global nav_text
-    global left_label
+    global dir_label
     global encounter_start
     global start_fight
+    global winner_text
+    try:
+        dir_label.destroy()
+    except (NameError, AttributeError):
+        pass
+    try:
+        winner_text.destroy()
+    except (NameError, AttributeError):
+        pass
     nav_text.destroy()
     left_btn.destroy()
     right_btn.destroy()
-    left_label = Label(root, wraplength=250, justify=CENTER, text="You go Left")
-    left_label.grid(row=0, column=1)
-    encounter = randint(0, 2)
+    dir_label = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="You go Left")
+    dir_label.grid(row=0, column=1)
+    encounter = random.randint(0, 2)
     if encounter == 1:
-        encounter_start = Label(root, wraplength=250, text="You see an orc ahead\n It attacks")
+        dir_label.destroy()
+        encounter_start = tkinter.Label(root, wraplength=250, text="You see an orc ahead\n It attacks")
         encounter_start.grid(row=1, column=1)
-        start_fight = Button(root, text="Fight", command=lambda: battle("orc"))
+        start_fight = tkinter.Button(root, text="Fight", command=lambda: battle("orc"))
         start_fight.grid(row=2, column=1)
+        root.update_idletasks()
     else:
-        left_btn = Button(root, text="Left", command=move_left)
+        left_btn = tkinter.Button(root, text="Left", command=move_left)
         left_btn.grid(row=1, column=0)
-        right_btn = Button(root, text="Right", command=move_right)
+        right_btn = tkinter.Button(root, text="Right", command=move_right)
         right_btn.grid(row=1, column=2)
 
 def move_right():
     global left_btn
     global right_btn
     global nav_text
-    global left_label
     global encounter_start
     global start_fight
+    global dir_label
+    global winner_text
+    try:
+        dir_label.destroy()
+    except (NameError, AttributeError):
+        pass
+    try:
+        winner_text.destroy()
+    except (NameError, AttributeError):
+        pass
     nav_text.destroy()
     left_btn.destroy()
     right_btn.destroy()
-    right_label = Label(root, wraplength=250, justify=CENTER, text="You go Right ")
-    right_label.grid(row=0, column=1)
-    encounter = randint(0, 2)
+    dir_label = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="You go Right ")
+    dir_label.grid(row=0, column=1)
+    encounter = random.randint(0, 2)
     if encounter == 1:
-        encounter_start = Label(root, wraplength=250, text="You see an orc ahead\n It attacks")
+        dir_label.destroy()
+        encounter_start = tkinter.Label(root, wraplength=250, text="You see an orc ahead\n It attacks")
         encounter_start.grid(row=1, column=1)
-        start_fight = Button(root, text="Fight", command=lambda: battle("orc"))
+        start_fight = tkinter.Button(root, text="Fight", command=lambda: battle("orc"))
         start_fight.grid(row=2, column=1)
     else:
-        left_btn = Button(root, text="Left", command=move_left)
+        left_btn = tkinter.Button(root, text="Left", command=move_left)
         left_btn.grid(row=1, column=0)
-        right_btn = Button(root, text="Right", command=move_right)
+        right_btn = tkinter.Button(root, text="Right", command=move_right)
         right_btn.grid(row=1, column=2)
 
 def move_loop():
@@ -130,40 +240,44 @@ def move_loop():
     global next_btn
     global intro_text
     global hero
+    global winner_text
+    try:
+        winner_text.destroy()
+    except (NameError, AttributeError):
+        pass
+    try:
+        nav_text.destroy()
+    except (NameError, AttributeError):
+        pass
+    try:
+        right_btn.destroy()
+    except (NameError, AttributeError):
+        pass
+    try:
+        left_btn.destroy()
+    except (NameError, AttributeError):
+        pass
     next_btn.destroy()
     intro_text.destroy()
     if hero.hp > 0:
-        nav_text = Label(root, wraplength=250, justify=CENTER, text="You can just make out 2 tunnels at the edge of the flickering light of your torch. Will you go right or left?")
+        nav_text = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="You can just make out 2 tunnels at the edge of the flickering light of your torch. Will you go right or left?")
         nav_text.grid(row=0, column=0, columnspan=3)
-        left_btn = Button(root, text="Left", command= move_left)
+        left_btn = tkinter.Button(root, text="Left", command= move_left)
         left_btn.grid(row=1, column=0)
-        right_btn = Button(root, text="Right", command= move_right)
+        right_btn = tkinter.Button(root, text="Right", command= move_right)
         right_btn.grid(row=1, column=2)
 
     else:
-        game_over =Label(root, wraplength=250, justify=CENTER, text="You have fallen in battle. Better luck next time")
+        game_over =tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="You have fallen in battle. Better luck next time")
         game_over.grid(row=0, column=1, columnspan=3)
-        exit_button = Button(root, command=root.quit)
+        exit_button = tkinter.Button(root, command=root.quit)
         exit_button.grid(row=1, column=1)
-        #encounter = randint(0, 2)
-        #if encounter == 1:
-            #print("You see an orc ahead")
-            #print("It attacks")
-           # battle("orc")
-       # else:
-          #  print("This cavern seems empty")
-          #  print("Do you go left or right?")
-
-
-
 
 monster_hp = 0
-intro_label = Label(root, text="What is your name?")
+intro_label = tkinter.Label(root, text="What is your name?")
 intro_label.grid(row=0, column=1)
-player_name = Entry(root)
+player_name = tkinter.Entry(root)
 player_name.grid(row=1, column=1)
-
-name_button = Button(root, text="Confirm", command= create_hero)
+name_button = tkinter.Button(root, text="Confirm", command= create_hero)
 name_button.grid(row=2, column=1)
-
 root.mainloop()
