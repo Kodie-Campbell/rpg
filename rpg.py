@@ -22,6 +22,24 @@ class player:
         self.hp = hp
         self.inventory = inventory
 
+def loose_fight():
+    global winner_text
+    global nav_text
+    global left_btn
+    global right_btn
+    global attack_text
+    global damage_text
+    global next_btn
+    attack_text.destroy()
+    damage_text.destroy()
+    next_btn.destroy()
+    monster_hp = 0
+    enemy_hp.config(text="Foe's hp: " + str(monster_hp))
+    looser_text = tkinter.Label(root, wraplength=250, text="You have been defeted by the " + monster)
+    looser_text.grid(row=0, column=0, columnspan=3)
+    close_app = tkinter.Button(root, text="close", command=root.quit)
+    close_app.grid(row=1, column=1)
+
 def win_fight(monster):
     global winner_text
     global nav_text
@@ -59,7 +77,11 @@ def monsterAttack(monster):
     damage_text.grid(row=1, column=0, columnspan=3)
     hero.hp = hero.hp - damage
     hp_indicator.config(text="HP: " + str(hero.hp))
-    next_btn.config(command= lambda: battle(monster))
+    action_with_arg = functools.partial(battle, monster)
+    if hero.hp <= 0:
+        action_with_arg = functools.partial(loose_fight, monster)
+    next_btn.config(command=action_with_arg)
+
 
 def attack(monster):
     global monster_hp
