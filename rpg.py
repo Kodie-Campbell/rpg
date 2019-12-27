@@ -2,6 +2,7 @@ import random
 import tkinter
 import functools
 
+
 root = tkinter.Tk()
 root.geometry("250x200")
 root.title("cave explorer")
@@ -24,6 +25,7 @@ class Player:
         self.inventory = inventory
 
 
+# noinspection PyGlobalUndefined
 def loose_fight(monster):
     global winner_text
     global nav_text
@@ -44,6 +46,7 @@ def loose_fight(monster):
     close_app.grid(row=1, column=1)
 
 
+# noinspection PyGlobalUndefined
 def win_fight(monster):
     global winner_text
     global nav_text
@@ -71,6 +74,7 @@ def win_fight(monster):
     right_btn.grid(row=2, column=2)
 
 
+# noinspection PyGlobalUndefined
 def monsterattack(monster):
     global attack_text
     global damage_text
@@ -92,6 +96,7 @@ def monsterattack(monster):
     next_btn.config(command=action_with_arg)
 
 
+# noinspection PyGlobalUndefined
 def attack(monster):
     global monster_hp
     global combat_text
@@ -117,6 +122,7 @@ def attack(monster):
     next_btn.grid(row=2, column=1)
 
 
+# noinspection PyGlobalUndefined
 def flee(monster):
     global combat_text
     global battle_options
@@ -124,12 +130,14 @@ def flee(monster):
     battle_options.destroy()
     attack_btn.destroy()
     flee_btn.destroy()
-    fleeing = tkinter.Label(root, wraplength=250, text="You Have fled from the cave in shame")
+    fleeing = tkinter.Label(root, wraplength=250, text=" The " + monster + "has terified you. You have fled from the "
+                                                                           "cave in shame")
     fleeing.grid(row=0, column=0, columnspan=3)
     close_app = tkinter.Button(root, text="close", command=root.quit)
     close_app.grid(row=1, column=1)
 
 
+# noinspection PyGlobalUndefined
 def battle(monster):
     global monster_hp
     global flee_btn
@@ -171,6 +179,7 @@ def battle(monster):
     flee_btn.grid(row=2, column=0)
 
 
+# noinspection PyGlobalUndefined
 def create_hero():
     global hero
     global greeting
@@ -185,7 +194,7 @@ def create_hero():
     intro_label.destroy()
     name_button.destroy()
     player_name.destroy()
-    intro_text = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="Welcome " + hero.name + "you find "
+    intro_text = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="Welcome " + hero.name + " you find "
                                                                                                            "your self"
                                                                                                            " in a "
                                                                                                            "cavern.")
@@ -200,6 +209,7 @@ def create_hero():
     enemy_hp.grid(row=5, column=2)
 
 
+# noinspection PyGlobalUndefined
 def move_left():
     global left_btn
     global right_btn
@@ -236,6 +246,7 @@ def move_left():
         right_btn.grid(row=1, column=2)
 
 
+# noinspection PyGlobalUndefined
 def move_right():
     global left_btn
     global right_btn
@@ -271,6 +282,7 @@ def move_right():
         right_btn.grid(row=1, column=2)
 
 
+# noinspection PyGlobalUndefined
 def move_loop():
     global move_dir
     global nav_text
@@ -312,7 +324,7 @@ def move_loop():
 
     else:
         game_over = tkinter.Label(root, wraplength=250, justify=tkinter.CENTER, text="You have fallen in battle. "
-                                                                                    "Better luck next time")
+                                                                                     "Better luck next time")
         game_over.grid(row=0, column=1, columnspan=3)
         exit_button = tkinter.Button(root, command=root.quit)
         exit_button.grid(row=1, column=1)
@@ -325,4 +337,4 @@ player_name = tkinter.Entry(root)
 player_name.grid(row=1, column=1)
 name_button = tkinter.Button(root, text="Confirm", command=create_hero)
 name_button.grid(row=2, column=1)
-root .mainloop()
+root.mainloop()
