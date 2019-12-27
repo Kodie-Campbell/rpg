@@ -25,10 +25,10 @@ class Player:
 
 
 def loose_fight(monster):
-    #global winner_text
-    #global nav_text
-    #global left_btn
-    #global right_btn
+    global winner_text
+    global nav_text
+    global left_btn
+    global right_btn
     global attack_text
     global damage_text
     global next_btn
@@ -47,8 +47,8 @@ def loose_fight(monster):
 def win_fight(monster):
     global winner_text
     global nav_text
-    #global left_btn
-    #global right_btn
+    global left_btn
+    global right_btn
     global attack_text
     global damage_text
     global next_btn
@@ -173,13 +173,13 @@ def battle(monster):
 
 def create_hero():
     global hero
-    #global greeting
+    global greeting
     global player_name
     global intro_label
     global intro_text
-    #global next_btn
-    #global enemy_hp
-    #global hp_indicator
+    global next_btn
+    global enemy_hp
+    global hp_indicator
     name = player_name.get()
     hero = Player(name, 100, ["dagger"])
     intro_label.destroy()
@@ -272,11 +272,11 @@ def move_right():
 
 
 def move_loop():
-    #global move_dir
+    global move_dir
     global nav_text
     global left_btn
     global right_btn
-    #global movement
+    global movement
     global next_btn
     global intro_text
     global hero
